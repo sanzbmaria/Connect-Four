@@ -22,6 +22,7 @@ import javax.swing.BoxLayout;
 import java.awt.FlowLayout;
 import javax.swing.SpringLayout;
 
+//Leave this alone for now
 public class Display {
 
 	Game game = Launcher.game;

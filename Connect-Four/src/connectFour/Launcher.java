@@ -1,5 +1,7 @@
 package connectFour;
 
+import java.util.Scanner;
+
 public class Launcher {
 
 	public static Game game;
@@ -9,6 +11,19 @@ public class Launcher {
 		//Version 05/30/2020
 		
 		game = new Game();//Starts the game
+
+		//Temporary loop to play the game until we make the GUI
+
+		Scanner scan = new Scanner(System.in);
+		int temp;
+		game.print();
+		while(!game.isWinner() ){
+
+			System.out.println("In which column do you want to place the disk? ");
+			temp = scan.nextInt();
+			game.run(temp);
+		}
+
 	}
 
 	
@@ -20,4 +35,3 @@ public class Launcher {
 
 }
 
-//Icons made by <a href="http://fontawesome.io/" title="Dave Gandy">Dave Gandy</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>

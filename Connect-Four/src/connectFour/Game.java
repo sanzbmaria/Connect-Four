@@ -7,18 +7,18 @@ public class Game{
 	
 	private int[][] board; //This will be the board that we will use to store the state 
 	private int[] boardNumberDisk; //this will store the number of disk on each column to check if it is full 
-	
-	public static int width = 7;
-	public static  int height = 6;
-	public String  title;
-	private boolean running = false;
-	
-	static boolean winner = false; 
-	boolean newGame = false; //This should be updated if the new game is pressed 
-	
-	//Set variables for the columns 
+
+	public int column;
+	public final int WIDTH = 7;
+	public final int HEIGHT = 6;
+
+	boolean winner = false;
+	boolean newGame = false; //This should be updated if the new game  button is pressed
+
+	//Set variables for the columns m
+	//might delete as I havent used them
 	private final int COLUM0 = 0;
-	private final int COLUM1 = 1; 
+	private final int COLUM1 = 1;
 	private final int COLUM2 = 2; 
 	private final int COLUM3 = 3; 
 	private final int COLUM4 = 4; 
@@ -35,24 +35,23 @@ public class Game{
 
 	/*The constructor will get called and will initialize the variables needed */
 	public Game() {
-		this.board = new int[width][height];
-		this.boardNumberDisk = new int[width];
+		this.board = new int[HEIGHT][WIDTH];
+		this.boardNumberDisk = new int[WIDTH];
 		init(); // Initializes the game
 	}
 
-	//This method initializes all the graphics of the game
+	//This method initializes all the graphics of the game and the boards to 0
 	private void init(){
 		//This loop initializes all positions to EMPTY;
-		for(int i = 0; i < width; i++ ) {
-			for(int j = 0; j < height; j++) {
+		for(int i = 0; i < HEIGHT; i++ ) {
+			for(int j = 0; j < WIDTH; j++) {
 				this.board[i][j] = EMPTY;
 			}
 		}
 	
 		//After making sure everything is EMPTY we can create the Display
 		//this.display = new Display();
-		
-		
+
 		//Initialize the turn to player 1
 		this.turn = PLAYER1; 
 	}
@@ -61,26 +60,22 @@ public class Game{
 	
 	/*This will update the display every time the players make a move*/
 	private void update(int col){
-		/*1. Check who's turn is it
-		  2. IF (column selected is not full)
-	             check boardNumberDisk[col] for current location 
-	             	 update boardNumberDisk[col] += 1;
-	                 this will return row-1 //for now lets call it row
-	             update board[col][row]  
-	      3. check the current board to see if there is a winner 
-	      			IF winner then display the winner and end the game
-	      4. update the turn 
-	      			IF(turn == PLAYER1) 
-	      				turn == PLAYER2
-      				else 
-      					turn == PLAYER1  */
-		 
-		if(!isFull(col)) {
-			//Update the board with the respective player
-			this.board[col][locationToPlace(col)] = this.turn; 
-			//check if winner 
-			
-			//Update the turn to the next player
+
+		/*It would be nice to check that is a valid input but because on the final version it will
+		run with buttons there is no need just be careful while testing */
+
+		//this wont be needed when playing with the GUI
+		this.column = col -1; //The user will input starting at idx 1 but the arr starts at idx 0
+
+		int tempRow;
+		//Check if the column selected is not full
+		if(!isFull(column)) {
+			//IF not ful -> Update the board with the respective player
+			tempRow = locationToPlace(column) -1 ; //get the next empty row to place the disk
+			this.board[tempRow][column] = this.turn; //update that row with that player's number
+			//check if winner there is a winner
+			winner(this.turn); //if there is a winner then winner function will stop the game
+			//If the game has not stopped then update the turn to the next player
 			if(this.turn == PLAYER1) {
 				this.turn = PLAYER2;
 			}
@@ -89,38 +84,40 @@ public class Game{
 			}
 			
 		}
+		//If the column is full
 		else {
 			//Display an error and prompt the same user to retry
 		}		
 	}
-	
+
+
+	//This function checks if the column selected by the user is full or not
 	private  boolean isFull(int col) {
-		if(this.boardNumberDisk[col] == height) {
-			return true;
-		}
-		return false;
+		return this.boardNumberDisk[col] == HEIGHT;
 	}
-	
+
+	//This function returns the next empty row to place the disk
 	private int locationToPlace(int col) {
 		//Arrays start [0][0] at the right corner but we start filling from the bottom up therefore to find the next location
-		int ret = this.height - this.boardNumberDisk[col];
+		int ret = this.HEIGHT - this.boardNumberDisk[col];
+		//there is an error here
 		this.boardNumberDisk[col]+= 1; //update the value
 		return ret;
 	}
 
-	/*Drawing the stuff in the game*/
-	private static void render(){
-		
+	/*Drawing the stuff in the game GUI*/
+	private void render(){
+		print();
 	}
 
-	/*This method will be called after the column buttons are pressed*/
+	/*This method will be called after the column buttons are pressed for now its called in lauch*/
 	public void run(int col) {
 		//safety check
-		System.out.println("Clicked col" + col);
-		
+
 		if(!winner) {
 			update(col);
 			render(); //not yet implemented
+
 		}
 		else {
 			if(this.turn == PLAYER1) {
@@ -135,11 +132,17 @@ public class Game{
 
 	//this class will check the array to see if there are 4 disks in a line 
 	public void winner(int turn) {
-		
+		/*Check if there are 4 of the same player:
+		  1. Horizontally
+		  2. Vertically
+		  3. Diagonally
+		 */
 		//if there are then 
 		this.winner = true;
 		//stop the game
 		stop(turn);
+
+		//else do nothing
 	}
 
 	//Method called when someone wins 
@@ -147,7 +150,27 @@ public class Game{
 		//display the winner 
 		//end the game
 	}
-	
+
+
+	//Temp print until we make the GUI
+	public void print(){
+
+		for(int i = 0; i < WIDTH; i++){
+			System.out.print(i+1 + " " );
+		}
+		System.out.println();
+		for (int i = 0; i < HEIGHT; i++) {
+			for (int j = 0; j < WIDTH; j++) {
+				System.out.print(board[i][j] + " ");
+			}
+			System.out.println();
+		}
+	}
+
+	//temp function
+	public boolean isWinner(){
+		return winner;
+	}
 	
 }
 
