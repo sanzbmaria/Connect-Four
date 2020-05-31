@@ -63,7 +63,7 @@ public class Game{
 		}
 		else {
 			//Then the winner was the past player
-
+			stop(lastTurn);
 		}
 	}
 	
