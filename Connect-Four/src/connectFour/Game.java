@@ -134,11 +134,7 @@ public class Game{
 			}
 		}
 
-		//THis is a usless for to commit 
-		
-		for(int i = 0 ; i >2; i++) {
-			int temp1 = i;
-		}
+
 
 		// backslash diagonal
 
