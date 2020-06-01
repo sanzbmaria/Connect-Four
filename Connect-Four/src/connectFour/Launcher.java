@@ -9,7 +9,6 @@ public class Launcher {
 	public static void main(String[] args) {
 		//Author @Maria
 		//Version 05/30/2020
-		
 		game = new Game();//Starts the game
 
 		//Temporary loop to play the game until we make the GUI
