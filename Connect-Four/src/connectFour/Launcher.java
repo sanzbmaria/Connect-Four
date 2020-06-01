@@ -10,7 +10,7 @@ public class Launcher {
 		//Author @Maria
 		//Version 05/30/2020
 		game = new Game();//Starts the game
-
+		int angel = 21;
 		//Temporary loop to play the game until we make the GUI
 
 		Scanner scan = new Scanner(System.in);
