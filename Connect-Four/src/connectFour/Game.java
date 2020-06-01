@@ -1,5 +1,7 @@
 package connectFour;
 
+import static java.lang.System.exit;
+
 //This is the main part of the game
 public class Game{
 	
@@ -15,32 +17,26 @@ public class Game{
 	boolean winner = false;
 	boolean newGame = false; //This should be updated if the new game  button is pressed
 
-	//Set variables for the columns m
-	//might delete as I havent used them
-	private final int COLUM0 = 0;
-	private final int COLUM1 = 1;
-	private final int COLUM2 = 2; 
-	private final int COLUM3 = 3; 
-	private final int COLUM4 = 4; 
-	private final int COLUM5 = 5; 
-	private final int COLUM6 = 6; 
 	
-	
-	//Set the variables for players
+	//variables for players
 	private final int EMPTY = 0;
 	private final int PLAYER1 = 1;
 	private final int PLAYER2 = 2;
 	
-	int turn; //stores who's turn is it 
+	int turn; //stores who's turn is it
+	int lastTurn;
 
-	/*The constructor will get called and will initialize the variables needed */
+	/* THIS ARE THE MAIN METHODS BEING CALLED */
+
+
+	/*CALLED BY LAUNCHER : it will initialize the variables needed */
 	public Game() {
 		this.board = new int[HEIGHT][WIDTH];
 		this.boardNumberDisk = new int[WIDTH];
 		init(); // Initializes the game
 	}
 
-	//This method initializes all the graphics of the game and the boards to 0
+	/*CALLED BY GAME: initializes all the graphics of the game and the boards to 0 */
 	private void init(){
 		//This loop initializes all positions to EMPTY;
 		for(int i = 0; i < HEIGHT; i++ ) {
@@ -53,12 +49,25 @@ public class Game{
 		//this.display = new Display();
 
 		//Initialize the turn to player 1
-		this.turn = PLAYER1; 
+		this.turn = PLAYER1;
+		this.lastTurn = -1; //As it is the first time the game runs there is no last turn player
 	}
 
+	/*TEMP CALLED BY LAUNCHER (SHOULD BE CALLED BY COLUMN BUTTONS) : Runs the game*/
+	public void run(int col) {
+		//Should we double check no one has won yet?
+
+		if(!winner) {
+			update(col);
+			render(); //not yet implemented
+		}
+		else {
+			//Then the winner was the past player
+
+		}
+	}
 	
-	
-	/*This will update the display every time the players make a move*/
+	/*CALLED BY RUN: This will update the values every time the players make a move*/
 	private void update(int col){
 
 		/*It would be nice to check that is a valid input but because on the final version it will
@@ -76,13 +85,7 @@ public class Game{
 			//check if winner there is a winner
 			winner(this.turn); //if there is a winner then winner function will stop the game
 			//If the game has not stopped then update the turn to the next player
-			if(this.turn == PLAYER1) {
-				this.turn = PLAYER2;
-			}
-			else {
-				this.turn = PLAYER1;
-			}
-			
+			changePlayers(this.turn);
 		}
 		//If the column is full
 		else {
@@ -90,6 +93,80 @@ public class Game{
 		}		
 	}
 
+
+	//this class will check the array to see if there are 4 disks in a line 
+	public void winner(int turn) {
+		//IF THERE ARE WINNERS DONT FORGET TO SET THIS
+		//this.winner = true;
+		//stop the game
+		//stop(turn);
+
+/*		*//*HORIZONTAL -> if *//*
+		for (int i = 0; i < HEIGHT; i++) {
+			for (int j = 0; j < WIDTH; j++) {
+
+			}
+		}*/
+
+
+		//VERTICAL
+		/*The vertical checking works by first cheking the 1d array where the number of disk each column has is saved
+		* if the number of disks is less than 3 then we know there is no possibility of anyone winning vertically on that
+		* column so it is skipped, IF the number is greather than 3 then we will check the last position with the current
+		* if they are the same we will add to the counter, if they are different the counter gets reset. When the counter \
+		* gets to 4 we know the player has won! */
+		int sum= 0;
+		int temp;
+		for (int i = 0; i < WIDTH ; i++) {
+			if( this.boardNumberDisk[i] > 3){
+				temp = board[HEIGHT-1][i];
+				for (int j = HEIGHT-1; j >= 0  ; j--) {
+					if(temp == board[j][i]){
+						sum++;
+						temp = board[j][i];
+					}
+					else{
+						sum = 0;
+					}
+					if (sum == 4)
+						stop(turn);
+				}
+			}
+		}
+
+
+		// backslash diagonal
+
+		// forward slash
+
+		//else do nothing
+	}
+
+
+	//Method called when someone wins 
+	public void stop(int turn)  {
+		//display the winner 
+		//end the game
+		System.out.println("Player " + turn + "WON the game!");
+		exit(1);
+	}
+
+	/*CALLED BY RUN: Drawing the stuff in the game GUI*/
+	private void render(){
+		print();
+	}
+
+	/* HELPER METHODS*/
+	private void changePlayers(int currentTurn){
+		if(this.turn == PLAYER1) {
+			this.turn = PLAYER2;
+			this.lastTurn = PLAYER1;
+		}
+		else {
+			this.turn = PLAYER1;
+			this.lastTurn = PLAYER2;
+		}
+	}
 
 	//This function checks if the column selected by the user is full or not
 	private  boolean isFull(int col) {
@@ -100,55 +177,8 @@ public class Game{
 	private int locationToPlace(int col) {
 		//Arrays start [0][0] at the right corner but we start filling from the bottom up therefore to find the next location
 		int ret = this.HEIGHT - this.boardNumberDisk[col];
-		//there is an error here
 		this.boardNumberDisk[col]+= 1; //update the value
 		return ret;
-	}
-
-	/*Drawing the stuff in the game GUI*/
-	private void render(){
-		print();
-	}
-
-	/*This method will be called after the column buttons are pressed for now its called in lauch*/
-	public void run(int col) {
-		//safety check
-
-		if(!winner) {
-			update(col);
-			render(); //not yet implemented
-
-		}
-		else {
-			if(this.turn == PLAYER1) {
-				this.turn = PLAYER2;
-			}
-			else {
-				this.turn = PLAYER1;
-			}
-			stop(turn);
-		}
-	}
-
-	//this class will check the array to see if there are 4 disks in a line 
-	public void winner(int turn) {
-		/*Check if there are 4 of the same player:
-		  1. Horizontally
-		  2. Vertically
-		  3. Diagonally
-		 */
-		//if there are then 
-		this.winner = true;
-		//stop the game
-		stop(turn);
-
-		//else do nothing
-	}
-
-	//Method called when someone wins 
-	public void stop(int turn)  {
-		//display the winner 
-		//end the game
 	}
 
 
@@ -167,7 +197,7 @@ public class Game{
 		}
 	}
 
-	//temp function
+	//temp function used by launcher
 	public boolean isWinner(){
 		return winner;
 	}
