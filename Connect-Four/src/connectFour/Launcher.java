@@ -9,29 +9,18 @@ public class Launcher {
 	public static void main(String[] args) {
 		//Author @Maria
 		//Version 05/30/2020
-		
-		game = new Game();//Starts the game
 
-		//Temporary loop to play the game until we make the GUI
 
-		Scanner scan = new Scanner(System.in);
 		int temp;
+
+		Game game = new Game(300, 300, "Connect Four");
+		game.start();
 		game.print();
-		while(!game.isWinner() ){
 
-			System.out.println("In which column do you want to place the disk? ");
-			temp = scan.nextInt();
-			game.run(temp);
-		}
 
 	}
 
-	
 
-	public Game getGame() {
-		return game; 
-	}
-	
 
 }
 
