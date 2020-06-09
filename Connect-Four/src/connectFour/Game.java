@@ -4,9 +4,9 @@ import static java.lang.System.exit;
 
 //This is the main part of the game
 public class Game{
-	
+
 	private Display display;
-	
+
 	private int[][] board; //This will be the board that we will use to store the state 
 	private int[] boardNumberDisk; //this will store the number of disk on each column to check if it is full 
 
@@ -17,12 +17,12 @@ public class Game{
 	boolean winner = false;
 	boolean newGame = false; //This should be updated if the new game  button is pressed
 
-	
+
 	//variables for players
 	private final int EMPTY = 0;
 	private final int PLAYER1 = 1;
 	private final int PLAYER2 = 2;
-	
+
 	int turn; //stores who's turn is it
 	int lastTurn;
 
@@ -44,7 +44,7 @@ public class Game{
 				this.board[i][j] = EMPTY;
 			}
 		}
-	
+
 		//After making sure everything is EMPTY we can create the Display
 		//this.display = new Display();
 
@@ -66,7 +66,7 @@ public class Game{
 			stop(lastTurn);
 		}
 	}
-	
+
 	/*CALLED BY RUN: This will update the values every time the players make a move*/
 	private void update(int col){
 
@@ -90,7 +90,7 @@ public class Game{
 		//If the column is full
 		else {
 			//Display an error and prompt the same user to retry
-		}		
+		}
 	}
 
 
@@ -101,20 +101,13 @@ public class Game{
 		//stop the game
 		//stop(turn);
 
-/*		*//*HORIZONTAL -> if *//*
-		for (int i = 0; i < HEIGHT; i++) {
-			for (int j = 0; j < WIDTH; j++) {
-
-			}
-		}*/
-
 
 		//VERTICAL
 		/*The vertical checking works by first cheking the 1d array where the number of disk each column has is saved
-		* if the number of disks is less than 3 then we know there is no possibility of anyone winning vertically on that
-		* column so it is skipped, IF the number is greather than 3 then we will check the last position with the current
-		* if they are the same we will add to the counter, if they are different the counter gets reset. When the counter \
-		* gets to 4 we know the player has won! */
+		 * if the number of disks is less than 3 then we know there is no possibility of anyone winning vertically on that
+		 * column so it is skipped, IF the number is greather than 3 then we will check the last position with the current
+		 * if they are the same we will add to the counter, if they are different the counter gets reset. When the counter \
+		 * gets to 4 we know the player has won! */
 		int sum= 0;
 		int temp;
 		for (int i = 0; i < WIDTH ; i++) {
@@ -123,16 +116,69 @@ public class Game{
 				for (int j = HEIGHT-1; j >= 0  ; j--) {
 					if(temp == board[j][i]){
 						sum++;
-						temp = board[j][i];
 					}
 					else{
 						sum = 0;
 					}
-					if (sum == 4)
+					temp = board[j][i];
+					if (sum == 3)
 						stop(turn);
 				}
 			}
 		}
+
+		//HORIZONTAL
+
+		temp = 0;
+		sum = 0;
+		for (int i = 0; i < WIDTH-1 ; i++) {
+			temp = board[i][0];
+			for (int j = 1 ; j < HEIGHT ; j++) {
+				if(temp == board[i][j]){
+					if(temp != 0){
+						sum++;
+					}
+				}
+				else{
+					sum = 0;
+				}
+				temp = board[i][j];
+				if (sum == 3)
+					stop(turn);
+			}
+		}
+
+		//Diagonal
+
+
+		for (int i = 0; i < HEIGHT; i++) {
+			for (int j = 0; j < WIDTH; j++) {
+				if (board[i][j] != 0 && (j - 3 < WIDTH) && (i + 3 < HEIGHT)) {
+					sum = board[i][j] + board[i + 1][j - 1] + board[i + 2][j - 2] + board[i + 3][j - 3];
+					if ((sum == PLAYER1 * 4) && (board[i + 1][j - 1] != 0) && (board[i + 2][j - 2] != 0) && (board[i + 3][j - 3] != 0)) {
+						stop(PLAYER1);
+					}
+					if ((sum == PLAYER2 * 4) && (board[i + 1][j - 1] != 0) && (board[i + 2][j - 2] != 0) && (board[i + 3][j - 3] != 0)) {
+						stop(PLAYER2);
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < HEIGHT; i++) {
+			for (int j = 0; j < WIDTH; j++) {
+				if (board[i][j] != 0 && (j + 3 < WIDTH) && (i + 3 < HEIGHT)) {
+					sum = board[i][j] + board[i + 1][j + 1] + board[i + 2][j + 2] + board[i + 3][j + 3];
+					if ((sum == PLAYER1 * 4) && (board[i + 1][j + 1] != 0) && (board[i + 2][j + 2] != 0) && (board[i + 3][j + 3] != 0)) {
+						stop(PLAYER1);
+					}
+					if ((sum == PLAYER2 * 4) && (board[i + 1][j + 1] != 0) && (board[i + 2][j + 2] != 0) && (board[i + 3][j + 3] != 0)) {
+						stop(PLAYER2);
+					}
+				}
+			}
+		}
+
 
 
 
@@ -144,9 +190,9 @@ public class Game{
 	}
 
 
-	//Method called when someone wins 
+	//Method called when someone wins
 	public void stop(int turn)  {
-		//display the winner 
+		//display the winner
 		//end the game
 		System.out.println("Player " + turn + "WON the game!");
 		exit(1);
@@ -202,7 +248,5 @@ public class Game{
 	public boolean isWinner(){
 		return winner;
 	}
-	
+
 }
-
-
