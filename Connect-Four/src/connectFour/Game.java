@@ -1,7 +1,6 @@
 package connectFour;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
-import java.util.Scanner;
 
 import static java.lang.System.exit;
 
@@ -49,6 +48,30 @@ public class Game implements Runnable{
 		this.title = title;
 
 
+			//This loop initializes all positions to EMPTY;
+		for(int i = 0; i < HEIGHT; i++ ) {
+			for(int j = 0; j < WIDTH; j++) {
+				this.board[i][j] = EMPTY;
+			}
+		}
+
+
+		//Initialize the turn to player 1
+		winner = false;
+		this.turn = PLAYER1;
+		this.lastTurn = -1; //As it is the first time the game runs there is no last turn player
+	}
+
+
+	public void restart(){
+		winner = false;
+		this.board = new int[HEIGHT][WIDTH];
+		this.boardNumberDisk = new int[WIDTH];
+		this.width = width;
+		this.height = height;
+		this.title = title;
+
+
 		//This loop initializes all positions to EMPTY;
 		for(int i = 0; i < HEIGHT; i++ ) {
 			for(int j = 0; j < WIDTH; j++) {
@@ -60,21 +83,16 @@ public class Game implements Runnable{
 		//Initialize the turn to player 1
 		this.turn = PLAYER1;
 		this.lastTurn = -1; //As it is the first time the game runs there is no last turn player
-
-		init(); // Initializes the display
 	}
 
-
-	//THREAD
-
 	/*CALLED BY RUN: This will update the values every time the players make a move*/
-	private void update(int col){
+	public void update(int col){
 
 		/*It would be nice to check that is a valid input but because on the final version it will
 		run with buttons there is no need just be careful while testing */
 
 		//this wont be needed when playing with the GUI
-		this.column = col -1; //The user will input starting at idx 1 but the arr starts at idx 0
+		this.column = col; //The user will input starting at idx 1 but the arr starts at idx 0
 
 		int tempRow;
 		try{
@@ -89,6 +107,8 @@ public class Game implements Runnable{
 			return;
 		}
 
+
+
 		//Check if the column selected is not full
 		if(!isFull(column)) {
 			//IF not ful -> Update the board with the respective player
@@ -99,88 +119,28 @@ public class Game implements Runnable{
 			//If the game has not stopped then update the turn to the next player
 			changePlayers(this.turn);
 		}
-		//If the column is full
-		else {
-			//Display an error and prompt the same user to retry
 
+
+		//Check if all columns are full
+		try{
+			if(noWinner())
+				throw new NoWinnerException();
+
+		}
+		catch (NoWinnerException e){
+			//@angel Popup up message regarding draw
+			System.out.println("Its a draw!");
+			exit(1);
 		}
 	}
 
-	private void update() {
-		//The button listener should return a int which should be the col number.
-		//int pressedCol = display.actionListenerCol;
-
-		//update(pressedCol);
-
-
-		//Temporary method of updating
-		System.out.println("Player "+ turn + " In which column do you want to place the disk?  " );
-		Scanner scan = new Scanner(System.in);
-		int temp = scan.nextInt();
-		update(temp);
-
-	}
 
 
 	/*CALLED BY RUN: Drawing the stuff in the game GUI*/
-	private void render(){
+	private void render (){
 		print();
-/*
-
-		bs = display.getCanvas().getBufferStrategy();
-		if(bs == null){
-			display.getCanvas().createBufferStrategy(3);
-			return;
-		}
-		g = bs.getDrawGraphics();
-
-		//Clear the screen
-		g.clearRect(0,0,width,height);
-		//Draw Here!
-
-
-		//End Drawing!
-		bs.show();
-		g.dispose();
-*/
-
+		display.paintingUpdate();
 	}
-
-	@Override
-	public void run() {
-		while (running){
-			update();
-			render();
-		}
-		stop();
-	}
-
-
-	public synchronized void start(){
-		if(running == true)
-			return;
-		running = true;
-		thread = new Thread(this);
-		thread.start();
-	}
-	public synchronized void stop() {
-		if(!running)
-			return;
-		running = false;
-		try {
-			thread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
-
-	//End thread methods
-
-	private void init(){
-		display = new Display(title, width,height);
-	}
-
-
 	//this class will check the array to see if there are 4 disks in a line
 	public void winner(int turn) {
 		//IF THERE ARE WINNERS DONT FORGET TO SET THIS
@@ -233,7 +193,7 @@ public class Game implements Runnable{
 							sum = 0;
 						}
 						temp = board[j][i];
-						if (sum == 3)
+						if (sum == 4)
 							endGame(turn);
 					}
 				}
@@ -273,10 +233,15 @@ public class Game implements Runnable{
 	}
 
 
+
 	//Method called when someone wins
 	public void endGame(int turn)  {
-		System.out.println("Player " + turn + "WON the game!");
-		exit(1);
+		System.out.println("Player " + turn + " WON the game!");
+		print();
+		render();
+
+		winner = true;
+		stop();
 	}
 
 	/* HELPER METHODS*/
@@ -293,7 +258,9 @@ public class Game implements Runnable{
 
 	//This function checks if the column selected by the user is full or not
 	private  boolean isFull(int col) {
-		return this.boardNumberDisk[col] == HEIGHT;
+		if (col > 0)
+			return this.boardNumberDisk[col] == HEIGHT;
+		else return false;
 	}
 
 	//This function returns the next empty row to place the disk
@@ -325,4 +292,52 @@ public class Game implements Runnable{
 		return winner;
 	}
 
+	private boolean noWinner(){
+		for (int i = 0; i < WIDTH ; i++) {
+			if(boardNumberDisk[i] < HEIGHT)
+				return false;
+		}
+		return true;
+	}
+
+	public void SetDisplay(Display display) {
+		this.display = display;
+	}
+
+
+
+
+	public void runNT(int col){
+		update(col);
+		render();
+	}
+
+	@Override
+	public synchronized void run(){
+
+	}
+
+	public synchronized void start() {
+		if(running )
+			return;
+		running = true;
+		thread = new Thread(thread);
+		thread.start();
+	}
+
+	public int location(int r, int c) {
+		return board[r][c];
+	}
+
+	public synchronized void stop(){
+		if(!running)
+			return;
+		running = false;
+
+		try {
+			thread.join();
+		} catch (InterruptedException e){
+			e.printStackTrace();
+		}
+	}
 }
