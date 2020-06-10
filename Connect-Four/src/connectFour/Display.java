@@ -6,7 +6,6 @@ import java.net.PasswordAuthentication;
 import java.nio.file.Path;
 
 public class Display {
-    static int SQUARE_LENGTH = 72;
     Game game;
     int numCol;
     JFrame frame;
@@ -22,24 +21,33 @@ public class Display {
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
+        frame.setLocationRelativeTo(null);
         frame.setLayout(null);//missing
 
-        Buttons(); //Handless the creation of buttons
 
-        Painting();
+        //This is just to make the top the same color
+        JPanel empty = new JPanel();
+        empty.setBackground(new Color(52,52,74));
+        empty.setBounds(0,0,900,20);
+        frame.add(empty);
 
+        Buttons(); //Handles the creation of buttons
+
+        Painting();//Handles the board creation and "painting"
+        frame.setBackground(new Color(52,52,74));
         frame.setVisible(true);
 
 
     }
 
+    //Calls the class Paint that draws the board
     public void Painting(){
         JPanel pnPanel = new JPanel();
         pnPanel.setLayout(null);
         pnPanel.setBounds(0,60,600,600);
-        pnPanel.setBackground(Color.YELLOW);
+        pnPanel.setBackground(new Color(52,52,74));
 
+        //This is the important part because it call the Paint method (the one that "draws the board")
         board = new Paint(game);
         board.setBounds(30, 30, 450, 500);//missing
         pnPanel.add(board);
@@ -48,7 +56,9 @@ public class Display {
         pnPanel.setVisible(true);
 }
 
+//Will "repaint" the board after every move
 public void paintingUpdate(){
+        //Check if there is winner if not then just repaint, if there is restart the game and repaint (it is a safety check)
         if(!game.isWinner())
             board.repaint();
         else{
@@ -57,11 +67,12 @@ public void paintingUpdate(){
         }
 }
 
+//Handles the buttons
     private void Buttons(){
         JPanel pnButons = new JPanel();
         pnButons.setLayout(new FlowLayout());
-        pnButons.setBounds(-100, 10, 700,50);
-        pnButons.setBackground(Color.CYAN);
+        pnButons.setBounds(-100, 20, 700,50);
+        pnButons.setBackground(new Color(52,52,74));
         frame.add(pnButons);
 
         JButton colZero = new JButton("Zero");
@@ -95,6 +106,8 @@ public void paintingUpdate(){
 
 
     //BUTTONS ACTION
+    //Each button has its own action that send the col number
+    /*Maybe try to make a single action if possible?*/
     private void ColZeroActionPerformed(java.awt.event.ActionEvent event) {
         this.numCol = 0;
         game.runNT(0);
