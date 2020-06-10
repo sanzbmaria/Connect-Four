@@ -1,37 +1,24 @@
 package connectFour;
 
-import java.util.Scanner;
 
 public class Launcher {
 
 	public static Game game;
-	
+
 	public static void main(String[] args) {
 		//Author @Maria
 		//Version 05/30/2020
-		
-		game = new Game();//Starts the game
 
-		//Temporary loop to play the game until we make the GUI
 
-		Scanner scan = new Scanner(System.in);
-		int temp;
-		game.print();
-		while(!game.isWinner() ){
+		Game game = new Game(900, 800, "Connect Four");
+		//Display display = new Display("Connect Four",300 , 300, game);
+		//game.SetDisplay(display);
 
-			System.out.println("In which column do you want to place the disk? ");
-			temp = scan.nextInt();
-			game.run(temp);
-		}
+		Display display = new Display(600,681, "Connect Four", game);
+		game.SetDisplay(display);
 
 	}
 
-	
-
-	public Game getGame() {
-		return game; 
-	}
-	
 
 }
 

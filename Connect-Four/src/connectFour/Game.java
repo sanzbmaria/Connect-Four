@@ -1,14 +1,21 @@
 package connectFour;
+import java.awt.*;
+import java.awt.image.BufferStrategy;
 
 import static java.lang.System.exit;
 
-//This is the main part of the game
-public class Game{
-	
+//Same as Game but with threads (Im trying to implement it)
+public class Game implements Runnable{
+
+	private int width;
+	private int height;
+	private String title;
+	private Thread thread; //For threads
+
 	private Display display;
-	
-	private int[][] board; //This will be the board that we will use to store the state 
-	private int[] boardNumberDisk; //this will store the number of disk on each column to check if it is full 
+
+	private int[][] board; //This will be the board that we will use to store the state
+	private int[] boardNumberDisk; //this will store the number of disk on each column to check if it is full
 
 	public int column;
 	public final int WIDTH = 7;
@@ -16,67 +23,92 @@ public class Game{
 
 	boolean winner = false;
 	boolean newGame = false; //This should be updated if the new game  button is pressed
+	boolean running = false;
 
-	
 	//variables for players
 	private final int EMPTY = 0;
 	private final int PLAYER1 = 1;
 	private final int PLAYER2 = 2;
-	
+
 	int turn; //stores who's turn is it
 	int lastTurn;
+
+	private BufferStrategy bs;
+	private Graphics g;
 
 	/* THIS ARE THE MAIN METHODS BEING CALLED */
 
 
 	/*CALLED BY LAUNCHER : it will initialize the variables needed */
-	public Game() {
+	public Game(int width, int height, String title) {
 		this.board = new int[HEIGHT][WIDTH];
 		this.boardNumberDisk = new int[WIDTH];
-		init(); // Initializes the game
+		this.width = width;
+		this.height = height;
+		this.title = title;
+
+
+			//This loop initializes all positions to EMPTY;
+		for(int i = 0; i < HEIGHT; i++ ) {
+			for(int j = 0; j < WIDTH; j++) {
+				this.board[i][j] = EMPTY;
+			}
+		}
+
+
+		//Initialize the turn to player 1
+		winner = false;
+		this.turn = PLAYER1;
+		this.lastTurn = -1; //As it is the first time the game runs there is no last turn player
 	}
 
-	/*CALLED BY GAME: initializes all the graphics of the game and the boards to 0 */
-	private void init(){
+
+	public void restart(){
+		winner = false;
+		this.board = new int[HEIGHT][WIDTH];
+		this.boardNumberDisk = new int[WIDTH];
+		this.width = width;
+		this.height = height;
+		this.title = title;
+
+
 		//This loop initializes all positions to EMPTY;
 		for(int i = 0; i < HEIGHT; i++ ) {
 			for(int j = 0; j < WIDTH; j++) {
 				this.board[i][j] = EMPTY;
 			}
 		}
-	
-		//After making sure everything is EMPTY we can create the Display
-		//this.display = new Display();
+
 
 		//Initialize the turn to player 1
 		this.turn = PLAYER1;
 		this.lastTurn = -1; //As it is the first time the game runs there is no last turn player
 	}
 
-	/*TEMP CALLED BY LAUNCHER (SHOULD BE CALLED BY COLUMN BUTTONS) : Runs the game*/
-	public void run(int col) {
-		//Should we double check no one has won yet?
-
-		if(!winner) {
-			update(col);
-			render(); //not yet implemented
-		}
-		else {
-			//Then the winner was the past player
-			stop(lastTurn);
-		}
-	}
-	
 	/*CALLED BY RUN: This will update the values every time the players make a move*/
-	private void update(int col){
+	public void update(int col){
 
 		/*It would be nice to check that is a valid input but because on the final version it will
 		run with buttons there is no need just be careful while testing */
 
 		//this wont be needed when playing with the GUI
-		this.column = col -1; //The user will input starting at idx 1 but the arr starts at idx 0
+		this.column = col; //The user will input starting at idx 1 but the arr starts at idx 0
 
 		int tempRow;
+		try{
+			if(isFull(column) == true)
+				throw new InvalidColumnException();
+
+		}
+		catch (InvalidColumnException e){
+			//@angel Popup up message to try again in another column
+			//temp
+			System.out.println("Try again");
+			return;
+		}
+
+
+
 		//Check if the column selected is not full
 		if(!isFull(column)) {
 			//IF not ful -> Update the board with the respective player
@@ -87,74 +119,129 @@ public class Game{
 			//If the game has not stopped then update the turn to the next player
 			changePlayers(this.turn);
 		}
-		//If the column is full
-		else {
-			//Display an error and prompt the same user to retry
-		}		
+
+
+		//Check if all columns are full
+		try{
+			if(noWinner())
+				throw new NoWinnerException();
+
+		}
+		catch (NoWinnerException e){
+			//@angel Popup up message regarding draw
+			System.out.println("Its a draw!");
+			exit(1);
+		}
 	}
 
 
-	//this class will check the array to see if there are 4 disks in a line 
+
+	/*CALLED BY RUN: Drawing the stuff in the game GUI*/
+	private void render (){
+		print();
+		display.paintingUpdate();
+	}
+	//this class will check the array to see if there are 4 disks in a line
 	public void winner(int turn) {
 		//IF THERE ARE WINNERS DONT FORGET TO SET THIS
 		//this.winner = true;
 		//stop the game
 		//stop(turn);
 
-/*		*//*HORIZONTAL -> if *//*
-		for (int i = 0; i < HEIGHT; i++) {
-			for (int j = 0; j < WIDTH; j++) {
-
-			}
-		}*/
-
-
-		//VERTICAL
-		/*The vertical checking works by first cheking the 1d array where the number of disk each column has is saved
-		* if the number of disks is less than 3 then we know there is no possibility of anyone winning vertically on that
-		* column so it is skipped, IF the number is greather than 3 then we will check the last position with the current
-		* if they are the same we will add to the counter, if they are different the counter gets reset. When the counter \
-		* gets to 4 we know the player has won! */
 		int sum= 0;
 		int temp;
-		for (int i = 0; i < WIDTH ; i++) {
-			if( this.boardNumberDisk[i] > 3){
-				temp = board[HEIGHT-1][i];
-				for (int j = HEIGHT-1; j >= 0  ; j--) {
-					if(temp == board[j][i]){
+
+		//HORIZONTAL
+		temp = 0;
+		sum = 0;
+		for (int i = 0; i < WIDTH-1 ; i++) {
+			temp = board[i][0];
+			for (int j = 1 ; j < HEIGHT ; j++) {
+				if(temp == board[i][j]){
+					if(temp != 0){
 						sum++;
+					}
+				}
+				else{
+					sum = 0;
+				}
+				temp = board[i][j];
+				if (sum == 3)
+					endGame(turn);
+			}
+		}
+
+		//This only needed if a column is < 3
+		if(boardNumberDisk[0] > 3 ||  boardNumberDisk[1] > 3 || boardNumberDisk[2] > 3 || boardNumberDisk[3] > 3
+				|| boardNumberDisk[4] > 3 || boardNumberDisk[5] > 3 || boardNumberDisk[6] > 3){
+
+			//VERTICAL
+			/*The vertical checking works by first cheking the 1d array where the number of disk each column has is saved
+			 * if the number of disks is less than 3 then we know there is no possibility of anyone winning vertically on that
+			 * column so it is skipped, IF the number is greather than 3 then we will check the last position with the current
+			 * if they are the same we will add to the counter, if they are different the counter gets reset. When the counter \
+			 * gets to 4 we know the player has won! */
+
+			for (int i = 0; i < WIDTH ; i++) {
+				if( this.boardNumberDisk[i] > 3){
+					temp = board[HEIGHT-1][i];
+					for (int j = HEIGHT-1; j >= 0  ; j--) {
+						if(temp == board[j][i]){
+							sum++;
+						}
+						else{
+							sum = 0;
+						}
 						temp = board[j][i];
+						if (sum == 4)
+							endGame(turn);
 					}
-					else{
-						sum = 0;
+				}
+			}
+
+			//DIAGONAL 1
+			for (int i = 0; i < HEIGHT; i++) {
+				for (int j = 0; j < WIDTH; j++) {
+					if (board[i][j] != 0 && (j - 3 > 0 ) && (i + 3 < HEIGHT)) {
+						sum = board[i][j] + board[i + 1][j - 1] + board[i + 2][j - 2] + board[i + 3][j - 3];
+						if ((sum == PLAYER1 * 4) && (board[i + 1][j - 1] != 0) && (board[i + 2][j - 2] != 0) && (board[i + 3][j - 3] != 0)) {
+							endGame(PLAYER1);
+						}
+						if ((sum == PLAYER2 * 4) && (board[i + 1][j - 1] != 0) && (board[i + 2][j - 2] != 0) && (board[i + 3][j - 3] != 0)) {
+							endGame(PLAYER2);
+						}
 					}
-					if (sum == 4)
-						stop(turn);
+				}
+			}
+
+			//DIAGONAL 2
+			for (int i = 0; i < HEIGHT; i++) {
+				for (int j = 0; j < WIDTH; j++) {
+					if (board[i][j] != 0 && (j + 3 < WIDTH) && (i + 3 < HEIGHT)) {
+						sum = board[i][j] + board[i + 1][j + 1] + board[i + 2][j + 2] + board[i + 3][j + 3];
+						if ((sum == PLAYER1 * 4) && (board[i + 1][j + 1] != 0) && (board[i + 2][j + 2] != 0) && (board[i + 3][j + 3] != 0)) {
+							endGame(PLAYER1);
+						}
+						if ((sum == PLAYER2 * 4) && (board[i + 1][j + 1] != 0) && (board[i + 2][j + 2] != 0) && (board[i + 3][j + 3] != 0)) {
+							endGame(PLAYER2);
+						}
+					}
 				}
 			}
 		}
 
-
-
-		// backslash diagonal
-
-		// forward slash
-
-		//else do nothing
 	}
 
 
-	//Method called when someone wins 
-	public void stop(int turn)  {
-		//display the winner 
-		//end the game
-		System.out.println("Player " + turn + "WON the game!");
-		exit(1);
-	}
 
-	/*CALLED BY RUN: Drawing the stuff in the game GUI*/
-	private void render(){
+	//Method called when someone wins
+	public void endGame(int turn)  {
+		System.out.println("Player " + turn + " WON the game!");
 		print();
+		render();
+
+		winner = true;
+		stop();
 	}
 
 	/* HELPER METHODS*/
@@ -171,7 +258,9 @@ public class Game{
 
 	//This function checks if the column selected by the user is full or not
 	private  boolean isFull(int col) {
-		return this.boardNumberDisk[col] == HEIGHT;
+		if (col > 0)
+			return this.boardNumberDisk[col] == HEIGHT;
+		else return false;
 	}
 
 	//This function returns the next empty row to place the disk
@@ -202,7 +291,53 @@ public class Game{
 	public boolean isWinner(){
 		return winner;
 	}
-	
+
+	private boolean noWinner(){
+		for (int i = 0; i < WIDTH ; i++) {
+			if(boardNumberDisk[i] < HEIGHT)
+				return false;
+		}
+		return true;
+	}
+
+	public void SetDisplay(Display display) {
+		this.display = display;
+	}
+
+
+
+
+	public void runNT(int col){
+		update(col);
+		render();
+	}
+
+	@Override
+	public synchronized void run(){
+
+	}
+
+	public synchronized void start() {
+		if(running )
+			return;
+		running = true;
+		thread = new Thread(thread);
+		thread.start();
+	}
+
+	public int location(int r, int c) {
+		return board[r][c];
+	}
+
+	public synchronized void stop(){
+		if(!running)
+			return;
+		running = false;
+
+		try {
+			thread.join();
+		} catch (InterruptedException e){
+			e.printStackTrace();
+		}
+	}
 }
-
-

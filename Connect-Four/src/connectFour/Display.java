@@ -1,182 +1,148 @@
 package connectFour;
 
-import java.awt.EventQueue;
-import java.awt.Graphics;
+import javax.swing.*;
+import java.awt.*;
+import java.net.PasswordAuthentication;
+import java.nio.file.Path;
 
-import javax.swing.JFrame;
-import java.awt.GridBagLayout;
-
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import java.awt.GridBagConstraints;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import javax.swing.JDesktopPane;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
-import java.awt.GridLayout;
-import java.awt.Color;
-import java.awt.BorderLayout;
-import javax.swing.BoxLayout;
-import java.awt.FlowLayout;
-import javax.swing.SpringLayout;
-
-//Leave this alone for now
 public class Display {
+    Game game;
+    int numCol;
+    JFrame frame;
+    Paint board;
 
-	Game game = Launcher.game;
-	
-	private JFrame frame;
+    public Display(int width, int height, String title, Game game){
+        this.game = game;
+        //BASIC SETINGS
+        frame = new JFrame(title);
+        frame.setPreferredSize(new Dimension(width,height));
+        frame.setMinimumSize(new Dimension(width,height));
+        frame.setMaximumSize(new Dimension(width,height));
+        frame.setResizable(false);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					Display window = new Display();
-					window.frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
+        frame.setLocationRelativeTo(null);
+        frame.setLayout(null);//missing
 
-	/**
-	 * Create the application.
-	 */
-	public Display() {
-		initialize();
-	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
-	private void initialize() {
-		
-		ImageIcon arrow = new  ImageIcon("iconSmall.png"); //This is the arrow image
-		
-		//Initialize the JFrame 
-		frame = new JFrame();
-		frame.setBackground(new Color(102, 153, 204));
-		frame.setResizable(false);
-		frame.getContentPane().setForeground(new Color(153, 102, 255));
-		frame.setBounds(100, 100, 729, 584);
-		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		//This is the main Pane
-		frame.getContentPane().setBackground(new Color(53,65,81));
-		GridBagLayout gridBagLayout = new GridBagLayout();
-		gridBagLayout.columnWidths = new int[]{48, 77, 310, 87, 0};
-		gridBagLayout.rowHeights = new int[]{35, 29, 424, 23, 0};
-		gridBagLayout.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		gridBagLayout.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
-		frame.getContentPane().setLayout(gridBagLayout);
-		
-		
-		//This is the button Pane 
-		JPanel buttonPanel = new JPanel();
-		GridBagConstraints gbc_buttonPanel = new GridBagConstraints();
-		buttonPanel.setBackground(new Color(0, 0, 0, 0));
-		buttonPanel.setForeground(new Color(0, 0, 0, 0));
-		gbc_buttonPanel.fill = GridBagConstraints.BOTH;
-		gbc_buttonPanel.insets = new Insets(0, 0, 5, 0);
-		gbc_buttonPanel.gridwidth = 3;
-		gbc_buttonPanel.gridx = 1;
-		gbc_buttonPanel.gridy = 1;
-		frame.getContentPane().add(buttonPanel, gbc_buttonPanel);
-		
-		//Button for each column !!Starts at 0
-		JButton btnColumn0 = new JButton("");
-		btnColumn0.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				game.run(0); //Calls run with colum 0
-			}
-		});
-		btnColumn0.setOpaque(false);
-		btnColumn0.setIcon(arrow);
-		btnColumn0.setBackground(new Color(0, 0, 0, 0));
-		buttonPanel.add(btnColumn0);
-		
-		JButton btnColumn1 = new JButton("");
-		buttonPanel.add(btnColumn1);
-		btnColumn1.setBackground(new Color(0, 0, 0, 0));
-		btnColumn1.setOpaque(false);
-		btnColumn1.setIcon(arrow);
-		
-		JButton btnColumn2 = new JButton("");
-		buttonPanel.add(btnColumn2);
-		btnColumn2.setBackground(new Color(0, 0, 0, 0));
-		btnColumn2.setOpaque(false);
-		btnColumn2.setIcon(arrow);
-		
-		JButton btnColumn3 = new JButton("");
-		buttonPanel.add(btnColumn3);
-		btnColumn3.setBackground(new Color(0, 0, 0, 0));
-		btnColumn3.setOpaque(false);
-		btnColumn3.setIcon(arrow);
-		
-		JButton btnColumn4 = new JButton("");
-		buttonPanel.add(btnColumn4);
-		btnColumn4.setBackground(new Color(0, 0, 0, 0));
-		btnColumn4.setOpaque(false);
-		btnColumn4.setIcon(arrow);
-		
-		JButton btnColumn5 = new JButton("");
-		buttonPanel.add(btnColumn5);
-		btnColumn5.setBackground(new Color(0, 0, 0, 0));
-		btnColumn5.setOpaque(false);
-		btnColumn5.setIcon(arrow);
-		
-		JButton btnColumn6 = new JButton("");
-		buttonPanel.add(btnColumn6);
-		btnColumn6.setBackground(new Color(0, 0, 0, 0));
-		btnColumn6.setOpaque(false);
-		btnColumn6.setIcon(arrow);
-		
-		
-		//This is where the board will be displayed
-		JPanel boardPane = new JPanel();
-		boardPane.setBackground(new Color(0, 0, 0, 0));
-		boardPane.setForeground(new Color(0, 0, 0, 0));
-		GridBagConstraints gbc_boardPane = new GridBagConstraints();
-		gbc_boardPane.fill = GridBagConstraints.BOTH;
-		gbc_boardPane.insets = new Insets(0, 0, 5, 0);
-		gbc_boardPane.gridwidth = 3;
-		gbc_boardPane.gridx = 1;
-		gbc_boardPane.gridy = 2;
-		frame.getContentPane().add(boardPane, gbc_boardPane);
-		
-		//New Game button 
-		JButton btnNewButton = new JButton("New Game");
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		
-		
-		//This should display the players turn 
-		JLabel lblNewLabel = new JLabel("Player's Turn ");
-		lblNewLabel.setForeground(new Color(255, 255, 255));
-		GridBagConstraints gbc_lblNewLabel = new GridBagConstraints();
-		gbc_lblNewLabel.anchor = GridBagConstraints.EAST;
-		gbc_lblNewLabel.insets = new Insets(0, 0, 0, 5);
-		gbc_lblNewLabel.gridx = 1;
-		gbc_lblNewLabel.gridy = 3;
-		frame.getContentPane().add(lblNewLabel, gbc_lblNewLabel);
-		GridBagConstraints gbc_btnNewButton = new GridBagConstraints();
-		gbc_btnNewButton.anchor = GridBagConstraints.NORTHWEST;
-		gbc_btnNewButton.gridx = 3;
-		gbc_btnNewButton.gridy = 3;
-		frame.getContentPane().add(btnNewButton, gbc_btnNewButton);
-		frame.getContentPane().setBackground(new Color(53,65,81));
-	}
-	
+        //This is just to make the top the same color
+        JPanel empty = new JPanel();
+        empty.setBackground(new Color(52,52,74));
+        empty.setBounds(0,0,900,20);
+        frame.add(empty);
 
-	
+        Buttons(); //Handles the creation of buttons
+
+        Painting();//Handles the board creation and "painting"
+        frame.setBackground(new Color(52,52,74));
+        frame.setVisible(true);
+
+
+    }
+
+    //Calls the class Paint that draws the board
+    public void Painting(){
+        JPanel pnPanel = new JPanel();
+        pnPanel.setLayout(null);
+        pnPanel.setBounds(0,60,600,600);
+        pnPanel.setBackground(new Color(52,52,74));
+
+        //This is the important part because it call the Paint method (the one that "draws the board")
+        board = new Paint(game);
+        board.setBounds(30, 30, 450, 500);//missing
+        pnPanel.add(board);
+
+        frame.add(pnPanel);
+        pnPanel.setVisible(true);
 }
 
+//Will "repaint" the board after every move
+public void paintingUpdate(){
+        //Check if there is winner if not then just repaint, if there is restart the game and repaint (it is a safety check)
+        if(!game.isWinner())
+            board.repaint();
+        else{
+            game.restart();
+            board.repaint();
+        }
+}
 
+//Handles the buttons
+    private void Buttons(){
+        JPanel pnButons = new JPanel();
+        pnButons.setLayout(new FlowLayout());
+        pnButons.setBounds(-100, 20, 700,50);
+        pnButons.setBackground(new Color(52,52,74));
+        frame.add(pnButons);
+
+        JButton colZero = new JButton("Zero");
+        colZero.addActionListener(this::ColZeroActionPerformed);
+        pnButons.add(colZero);
+
+        JButton colOne = new JButton("One");
+        colOne.addActionListener(this::ColOneActionPerformed);
+        pnButons.add(colOne);
+
+        JButton colTwo = new JButton("Two");
+        colTwo.addActionListener(this::ColTwoActionPerformed);
+        pnButons.add(colTwo);
+
+        JButton colThree = new JButton("Three");
+        colThree.addActionListener(this::ColThreeActionPerformed);
+        pnButons.add(colThree);
+
+        JButton colFour = new JButton("Four");
+        colFour.addActionListener(this::ColFourActionPerformed);
+        pnButons.add(colFour);
+
+        JButton colFive = new JButton("Five");
+        colFive.addActionListener(this::ColFiveActionPerformed);
+        pnButons.add(colFive);
+
+        JButton colSix = new JButton("Six");
+        colSix.addActionListener(this::ColSixActionPerformed);
+        pnButons.add(colSix);
+    }
+
+
+    //BUTTONS ACTION
+    //Each button has its own action that send the col number
+    /*Maybe try to make a single action if possible?*/
+    private void ColZeroActionPerformed(java.awt.event.ActionEvent event) {
+        this.numCol = 0;
+        game.runNT(0);
+    }
+
+    private void ColOneActionPerformed(java.awt.event.ActionEvent event) {
+        this.numCol = 1;
+        game.runNT(1);
+    }
+    private void ColTwoActionPerformed(java.awt.event.ActionEvent event) {
+        this.numCol = 2;
+        game.runNT(2);
+
+    }
+
+    private void ColThreeActionPerformed(java.awt.event.ActionEvent event) {
+        this.numCol = 3;
+        game.runNT(3);
+    }
+
+    private void ColFourActionPerformed(java.awt.event.ActionEvent event) {
+        this.numCol = 4;
+        game.runNT(4);
+    }
+
+    private void ColFiveActionPerformed(java.awt.event.ActionEvent event) {
+        this.numCol = 5;
+        game.runNT(5);
+    }
+
+    private void ColSixActionPerformed(java.awt.event.ActionEvent event) {
+        this.numCol = 6;
+        game.runNT(6);
+    }
+
+
+
+}
