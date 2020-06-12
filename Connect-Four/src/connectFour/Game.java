@@ -131,6 +131,8 @@ public class Game implements Runnable{
 			//@angel Popup up message regarding draw
 			System.out.println("Its a draw!");
 			exit(1);
+			//mungkin ini harus dibenerin, jadi tolong dicek lagi
+			//kayak nya ini harusnya ada kayak dialog boxnya sendiri bukan pake sys out print yang simpl
 		}
 	}
 
@@ -167,7 +169,8 @@ public class Game implements Runnable{
 				}
 				temp = board[i][j];
 				if (sum == 3)
-					endGame(turn);
+					endGame(turn); //jadi ini artinya udah ada pemenangnya endGame(turn)
+				// turn itu indikasi kalo turnnya PLAYER1 atau PLAYER2
 			}
 		}
 
@@ -254,6 +257,11 @@ public class Game implements Runnable{
 			this.turn = PLAYER1;
 			this.lastTurn = PLAYER2;
 		}
+	}
+
+	// New getTurn function to get whose turn it is
+	int getTurn(){
+		return this.turn;
 	}
 
 	//This function checks if the column selected by the user is full or not
