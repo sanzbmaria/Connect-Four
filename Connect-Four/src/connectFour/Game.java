@@ -96,14 +96,16 @@ public class Game implements Runnable{
 
 		int tempRow;
 		try{
-			if(isFull(column) == true)
+			if(isFull(column))
 				throw new InvalidColumnException();
 
 		}
 		catch (InvalidColumnException e){
 			//@angel Popup up message to try again in another column
 			//temp
-			System.out.println("Try again");
+			//put function from display in here!
+			display.showColumnFull();
+			// System.out.println("Try again");
 			return;
 		}
 
@@ -131,8 +133,6 @@ public class Game implements Runnable{
 			//@angel Popup up message regarding draw
 			System.out.println("Its a draw!");
 			exit(1);
-			//mungkin ini harus dibenerin, jadi tolong dicek lagi
-			//kayak nya ini harusnya ada kayak dialog boxnya sendiri bukan pake sys out print yang simpl
 		}
 	}
 
@@ -156,9 +156,10 @@ public class Game implements Runnable{
 		//HORIZONTAL
 		temp = 0;
 		sum = 0;
-		for (int i = 0; i < WIDTH-1 ; i++) {
+		for (int i = 0; i < HEIGHT ; i++) {
 			temp = board[i][0];
-			for (int j = 1 ; j < HEIGHT ; j++) {
+			sum = 0;
+			for (int j = 1 ; j < WIDTH ; j++) {
 				if(temp == board[i][j]){
 					if(temp != 0){
 						sum++;
@@ -188,6 +189,7 @@ public class Game implements Runnable{
 			for (int i = 0; i < WIDTH ; i++) {
 				if( this.boardNumberDisk[i] > 3){
 					temp = board[HEIGHT-1][i];
+					sum = 0;
 					for (int j = HEIGHT-1; j >= 0  ; j--) {
 						if(temp == board[j][i]){
 							sum++;
@@ -300,7 +302,7 @@ public class Game implements Runnable{
 		return winner;
 	}
 
-	private boolean noWinner(){
+	public boolean noWinner(){
 		for (int i = 0; i < WIDTH ; i++) {
 			if(boardNumberDisk[i] < HEIGHT)
 				return false;
@@ -311,9 +313,6 @@ public class Game implements Runnable{
 	public void SetDisplay(Display display) {
 		this.display = display;
 	}
-
-
-
 
 	public void runNT(int col){
 		update(col);
