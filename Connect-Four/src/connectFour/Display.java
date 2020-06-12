@@ -12,6 +12,7 @@ public class Display {
     int numCol;
     JFrame frame;
     Paint board;
+    JTextField JTextField1;
 
     /*
     1. We need a NEW GAME button
@@ -44,9 +45,29 @@ public class Display {
         empty.setBounds(0,0,900,20);
         frame.add(empty);
 
-        //showTurns();
-        Buttons(); //Handles the creation of buttons
+        //JPanel for JTextField for the showing of turns
+        JPanel TextField = new JPanel();
+        TextField.setLayout(new FlowLayout());
+        TextField.setBounds(-245, 550, 1000, 50);
+        TextField.setBackground(new Color(105,162,176));
+        frame.add(TextField);
 
+        //showTurns();
+        JTextField1 = new JTextField();
+        JTextField1.setBounds(-245, 550, 228, 25);
+        TextField.add(JTextField1);
+
+        if(game.getTurn() == 1){
+            JTextField1.setText("Red's Turn");
+        }
+        else if (game.getTurn() == 2){
+            JTextField1.setText("Yellow's Turn");
+        }
+        else {
+            JTextField1.setText("Turn");
+        }
+
+        Buttons(); //Handles the creation of buttons
 
         Painting();//Handles the board creation and "painting"
         frame.setBackground(new Color(52,52,74));
@@ -56,7 +77,7 @@ public class Display {
         //to show turns
         //showTurns();
         //addTurnName(gr);
-        //showWinner();
+        showWinner();
 
     }
 
@@ -64,7 +85,7 @@ public class Display {
     public void Painting(){
         JPanel pnPanel = new JPanel();
         pnPanel.setLayout(null);
-        pnPanel.setBounds(0,60,600,600);
+        pnPanel.setBounds(0,60,600,490);
         pnPanel.setBackground(new Color(52,52,74));
 
         //This is the important part because it call the Paint method (the one that "draws the board")
@@ -82,6 +103,7 @@ public void paintingUpdate(){
         if(!game.isWinner())
             board.repaint();
         else{
+            showWinner();
             game.restart();
             board.repaint();
         }
@@ -100,13 +122,6 @@ public void paintingUpdate(){
         ngButton.setBounds(-245, 590, 1000, 50);
         ngButton.setBackground(new Color(52,52,74));
         frame.add(ngButton);
-
-        /*//JPanel for JTextField for the showing of turns
-        JPanel TextField = new JPanel();
-        TextField.setLayout(new FlowLayout());
-        TextField.setBounds(-245, 550, 1000, 50);
-        TextField.setBackground(new Color(249,234,100));
-        frame.add(TextField);*/
 
         JButton colZero = new JButton("Zero");
         colZero.setFont(new Font("Century Gothic", Font.BOLD, 12));
@@ -152,21 +167,10 @@ public void paintingUpdate(){
     }
 
     //shows the turns of current players
-    /* private void showTurns(){
-        JTextField JTextField1;
-        JTextField1 = new JTextField();
-        JTextField1.setBounds(-245, 550, 228, 25);
-        /*if(game.turn == 1){
-            JTextField1.setText("Red's Turn");
-        }
-        else if (game.turn == 2){
-            JTextField1.setText("Yellow's Turn");
-        }
-        else {
-            JTextField1.setText("Turn");
-        }*/
-
-        /* To be explored because it still would not appear on top of the new TextField JPanel */
+    /*private void showTurns(){
+        //This was supposedly to be put with JTextField functions but it would not work in this structure
+        // So I put it on the display part
+     */
     // }
 
 
@@ -236,13 +240,13 @@ public void paintingUpdate(){
     /* do the algorithm for Draw message popup window*/
 
     //attempt to show the winner popup message
-    /* public void showWinner(){
+    public void showWinner(){
         JFrame frameShowWinner = new JFrame();
-        if(game.isWinner() == true){
+        if(game.isWinner()){
             JOptionPane.showMessageDialog(frameShowWinner, "You won! A new game will start!", "End Game", JOptionPane.INFORMATION_MESSAGE);
             game.restart();
             paintingUpdate();
         }
-    } */
+    }  //figure out why this is not working, most probably it is the if statement.
 
 }
