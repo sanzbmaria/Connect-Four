@@ -2,10 +2,10 @@ package connectFour;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseListener;
+ /*import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.net.PasswordAuthentication;
-import java.nio.file.Path;
+import java.nio.file.Path;*/
 
 public class Display {
     Game game;
@@ -15,10 +15,12 @@ public class Display {
     JTextField JTextField1;
 
     /*
-    1. We need a NEW GAME button
-    2. We need a popup message to announce the winner / if it is a draw
-    3. Shows the current player
-    4. Popup message that says "Press any column to start again." After a draw or a player wins
+    1. We need a NEW GAME button //DONE
+    2. We need a popup message to announce the winner //DONE
+    3. Popup message to announce draw // DONE
+    4. Popup message to announce if column is full //DONE
+    5. Shows the current player
+    6. Make the top buttons into arrows
 
     Extra: Choose the colors
      */
@@ -30,7 +32,7 @@ public class Display {
         frame.setPreferredSize(new Dimension(width,height));
         frame.setMinimumSize(new Dimension(width,height));
         frame.setMaximumSize(new Dimension(width,height));
-        frame.setResizable(true);
+        frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         //frame.addMouseListener((MouseListener) this);
         //frame.addMouseMotionListener((MouseMotionListener) this);
@@ -48,7 +50,7 @@ public class Display {
         //JPanel for JTextField for the showing of turns
         JPanel TextField = new JPanel();
         TextField.setLayout(new FlowLayout());
-        TextField.setBounds(-245, 550, 1000, 50);
+        TextField.setBounds(-245, 550, 1000, 40);
         TextField.setBackground(new Color(105,162,176));
         frame.add(TextField);
 
@@ -104,23 +106,24 @@ public void paintingUpdate(){
             board.repaint();
         else{
             showWinner();
+            showDraw();
             game.restart();
             board.repaint();
         }
 }
 
 //Handles the buttons
-    private void Buttons(){
+    private void Buttons() {
         JPanel pnButons = new JPanel();
         pnButons.setLayout(new FlowLayout());
-        pnButons.setBounds(-100, 20, 700,50);
-        pnButons.setBackground(new Color(52,52,74));
+        pnButons.setBounds(-100, 20, 700, 50);
+        pnButons.setBackground(new Color(52, 52, 74));
         frame.add(pnButons);
 
         JPanel ngButton = new JPanel();
         ngButton.setLayout(new FlowLayout());
-        ngButton.setBounds(-245, 590, 1000, 50);
-        ngButton.setBackground(new Color(52,52,74));
+        ngButton.setBounds(-245, 590, 1000, 60);
+        ngButton.setBackground(new Color(52, 52, 74));
         frame.add(ngButton);
 
         JButton colZero = new JButton("Zero");
@@ -163,16 +166,7 @@ public void paintingUpdate(){
         newGameButton.addActionListener(this::newGameButtonActionPerformed);
         ngButton.add(newGameButton);
 
-
     }
-
-    //shows the turns of current players
-    /*private void showTurns(){
-        //This was supposedly to be put with JTextField functions but it would not work in this structure
-        // So I put it on the display part
-     */
-    // }
-
 
     //BUTTONS ACTION
     //Each button has its own action that send the col number
@@ -248,5 +242,21 @@ public void paintingUpdate(){
             paintingUpdate();
         }
     }  //figure out why this is not working, most probably it is the if statement.
+    
+    //attempt to show an announcement if it is a draw
+    public void showDraw(){
+        JFrame frameShowDraw = new JFrame();
+        if(game.noWinner()) {
+            JOptionPane.showMessageDialog(frameShowDraw, "It is Draw! A new game will start!", "End Game", JOptionPane.INFORMATION_MESSAGE);
+            game.restart();
+            paintingUpdate();
+        }
+    }
+
+    //attempt to show an announcement if a column is full
+    public void showColumnFull(){
+        JFrame frameShowColumnFull = new JFrame();
+        JOptionPane.showMessageDialog(frameShowColumnFull, "Column full, try again!", "Column Full!", JOptionPane.INFORMATION_MESSAGE);
+    }
 
 }
