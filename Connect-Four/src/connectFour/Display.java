@@ -12,8 +12,7 @@ public class Display {
     int numCol;
     JFrame frame;
     Paint board;
-    JTextField JTextField1;
-    //ImageIcon arrow = new ImageIcon("arrowIcon.png");
+    JTextField JTextField;
 
     /*
     1. We need a NEW GAME button //DONE
@@ -21,7 +20,7 @@ public class Display {
     3. Popup message to announce draw // DONE
     4. Popup message to announce if column is full //DONE
     5. Shows the current player
-    6. Make the top buttons into arrows //DONE, but
+    6. Make the top buttons into arrows //DONE, but it is not from an icon
 
     Extra: Choose the colors
      */
@@ -35,8 +34,6 @@ public class Display {
         frame.setMaximumSize(new Dimension(width,height));
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //frame.addMouseListener((MouseListener) this);
-        //frame.addMouseMotionListener((MouseMotionListener) this);
 
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);//missing
@@ -80,7 +77,6 @@ public class Display {
         //to show turns
         //showTurns();
         //addTurnName(gr);
-        showWinner();
 
     }
 
@@ -107,7 +103,6 @@ public void paintingUpdate(){
             board.repaint();
         else{
             showWinner();
-            showDraw();
             game.restart();
             board.repaint();
         }
@@ -239,11 +234,9 @@ public void paintingUpdate(){
     //attempt to show an announcement if it is a draw
     public void showDraw(){
         JFrame frameShowDraw = new JFrame();
-        //if(game.noWinner()) {
-            JOptionPane.showMessageDialog(frameShowDraw, "It is Draw! A new game will start!", "End Game", JOptionPane.INFORMATION_MESSAGE);
-            game.restart();
-            paintingUpdate();
-        //}
+        JOptionPane.showMessageDialog(frameShowDraw, "It is a Draw! A new game will start!", "Draw!", JOptionPane.INFORMATION_MESSAGE);
+        game.restart();
+        paintingUpdate();
     }
 
     //attempt to show an announcement if a column is full
