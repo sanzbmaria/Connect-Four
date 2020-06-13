@@ -13,6 +13,7 @@ public class Display {
     JFrame frame;
     Paint board;
     JTextField JTextField1;
+    //ImageIcon arrow = new ImageIcon("arrowIcon.png");
 
     /*
     1. We need a NEW GAME button //DONE
@@ -20,7 +21,7 @@ public class Display {
     3. Popup message to announce draw // DONE
     4. Popup message to announce if column is full //DONE
     5. Shows the current player
-    6. Make the top buttons into arrows
+    6. Make the top buttons into arrows //DONE, but
 
     Extra: Choose the colors
      */
@@ -48,14 +49,14 @@ public class Display {
         frame.add(empty);
 
         //JPanel for JTextField for the showing of turns
-        JPanel TextField = new JPanel();
+        /*JPanel TextField = new JPanel();
         TextField.setLayout(new FlowLayout());
         TextField.setBounds(-245, 550, 1000, 40);
         TextField.setBackground(new Color(105,162,176));
-        frame.add(TextField);
+        frame.add(TextField);*/
 
         //showTurns();
-        JTextField1 = new JTextField();
+        /*JTextField1 = new JTextField();
         JTextField1.setBounds(-245, 550, 228, 25);
         TextField.add(JTextField1);
 
@@ -67,7 +68,7 @@ public class Display {
         }
         else {
             JTextField1.setText("Turn");
-        }
+        }*/
 
         Buttons(); //Handles the creation of buttons
 
@@ -114,11 +115,11 @@ public void paintingUpdate(){
 
 //Handles the buttons
     private void Buttons() {
-        JPanel pnButons = new JPanel();
-        pnButons.setLayout(new FlowLayout());
-        pnButons.setBounds(-100, 20, 700, 50);
-        pnButons.setBackground(new Color(52, 52, 74));
-        frame.add(pnButons);
+        JPanel pnButtons = new JPanel();
+        pnButtons.setLayout(new FlowLayout());
+        pnButtons.setBounds(-100, 20, 700, 50);
+        pnButtons.setBackground(new Color(52, 52, 74));
+        frame.add(pnButtons);
 
         JPanel ngButton = new JPanel();
         ngButton.setLayout(new FlowLayout());
@@ -126,43 +127,44 @@ public void paintingUpdate(){
         ngButton.setBackground(new Color(52, 52, 74));
         frame.add(ngButton);
 
-        JButton colZero = new JButton("Zero");
-        colZero.setFont(new Font("Century Gothic", Font.BOLD, 12));
+        JButton colZero = new JButton(" \uD83E\uDC83 ");
+        colZero.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colZero.addActionListener(this::ColZeroActionPerformed);
-        pnButons.add(colZero);
+        pnButtons.add(colZero);
 
-        JButton colOne = new JButton("One");
-        colOne.setFont(new Font("Century Gothic", Font.BOLD, 12));
+
+        JButton colOne = new JButton(" \uD83E\uDC83 ");
+        colOne.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colOne.addActionListener(this::ColOneActionPerformed);
-        pnButons.add(colOne);
+        pnButtons.add(colOne);
 
-        JButton colTwo = new JButton("Two");
-        colTwo.setFont(new Font("Century Gothic", Font.BOLD, 12));
+        JButton colTwo = new JButton(" \uD83E\uDC83 ");
+        colTwo.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colTwo.addActionListener(this::ColTwoActionPerformed);
-        pnButons.add(colTwo);
+        pnButtons.add(colTwo);
 
-        JButton colThree = new JButton("Three");
-        colThree.setFont(new Font("Century Gothic", Font.BOLD, 12));
+        JButton colThree = new JButton(" \uD83E\uDC83 ");
+        colThree.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colThree.addActionListener(this::ColThreeActionPerformed);
-        pnButons.add(colThree);
+        pnButtons.add(colThree);
 
-        JButton colFour = new JButton("Four");
-        colFour.setFont(new Font("Century Gothic", Font.BOLD, 12));
+        JButton colFour = new JButton(" \uD83E\uDC83 ");
+        colFour.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colFour.addActionListener(this::ColFourActionPerformed);
-        pnButons.add(colFour);
+        pnButtons.add(colFour);
 
-        JButton colFive = new JButton("Five");
-        colFive.setFont(new Font("Century Gothic", Font.BOLD, 12));
+        JButton colFive = new JButton(" \uD83E\uDC83 ");
+        colFive.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colFive.addActionListener(this::ColFiveActionPerformed);
-        pnButons.add(colFive);
+        pnButtons.add(colFive);
 
-        JButton colSix = new JButton("Six");
-        colSix.setFont(new Font("Century Gothic", Font.BOLD, 12));
+        JButton colSix = new JButton(" \uD83E\uDC83 ");
+        colSix.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colSix.addActionListener(this::ColSixActionPerformed);
-        pnButons.add(colSix);
+        pnButtons.add(colSix);
 
         JButton newGameButton = new JButton("NEW GAME");
-        newGameButton.setFont(new Font("Century Gothic", Font.BOLD, 15));
+        newGameButton.setFont(new Font("Century Gothic", Font.BOLD, 16));
         newGameButton.addActionListener(this::newGameButtonActionPerformed);
         ngButton.add(newGameButton);
 
@@ -224,15 +226,6 @@ public void paintingUpdate(){
         } //I will explore again to see if this might work
     }*/
 
-    //Algorithm for Winner message popup window
-    /*
-        if (isWinner == true) { //or something like if(isWinner())
-            JOptionPane.showDialog.message(null, "____ wins");
-        }
-     */
-
-    /* do the algorithm for Draw message popup window*/
-
     //attempt to show the winner popup message
     public void showWinner(){
         JFrame frameShowWinner = new JFrame();
@@ -241,16 +234,16 @@ public void paintingUpdate(){
             game.restart();
             paintingUpdate();
         }
-    }  //figure out why this is not working, most probably it is the if statement.
+    }
     
     //attempt to show an announcement if it is a draw
     public void showDraw(){
         JFrame frameShowDraw = new JFrame();
-        if(game.noWinner()) {
+        //if(game.noWinner()) {
             JOptionPane.showMessageDialog(frameShowDraw, "It is Draw! A new game will start!", "End Game", JOptionPane.INFORMATION_MESSAGE);
             game.restart();
             paintingUpdate();
-        }
+        //}
     }
 
     //attempt to show an announcement if a column is full
