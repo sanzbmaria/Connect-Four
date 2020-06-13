@@ -131,8 +131,9 @@ public class Game implements Runnable{
 		}
 		catch (NoWinnerException e){
 			//@angel Popup up message regarding draw
-			System.out.println("Its a draw!");
-			exit(1);
+			display.showDraw();
+			//System.out.println("Its a draw!");
+			// exit(1);
 		}
 	}
 
@@ -268,7 +269,7 @@ public class Game implements Runnable{
 
 	//This function checks if the column selected by the user is full or not
 	private  boolean isFull(int col) {
-		if (col > 0)
+		if (col >= 0)
 			return this.boardNumberDisk[col] == HEIGHT;
 		else return false;
 	}
