@@ -1,43 +1,27 @@
 package connectFour;
 
+import javax.sound.sampled.*;
 import javax.swing.*;
 import java.awt.*;
- /*import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.net.PasswordAuthentication;
-import java.nio.file.Path;*/
+import java.io.*;
 
 public class Display {
     Game game;
     int numCol;
     JFrame frame;
     Paint board;
-    JTextField JTextField;
-
-    /*
-    1. We need a NEW GAME button //DONE
-    2. We need a popup message to announce the winner //DONE
-    3. Popup message to announce draw // DONE
-    4. Popup message to announce if column is full //DONE
-    5. Shows the current player
-    6. Make the top buttons into arrows //DONE, but it is not from an icon
-
-    Extra: Choose the colors
-     */
 
     public Display(int width, int height, String title, Game game){
         this.game = game;
-        //BASIC SETINGS
+        //BASIC SETTINGS
         frame = new JFrame("Connect Four");
         frame.setPreferredSize(new Dimension(width,height));
         frame.setMinimumSize(new Dimension(width,height));
         frame.setMaximumSize(new Dimension(width,height));
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
         frame.setLocationRelativeTo(null);
         frame.setLayout(null);//missing
-
 
         //This is just to make the top the same color
         JPanel empty = new JPanel();
@@ -45,40 +29,28 @@ public class Display {
         empty.setBounds(0,0,900,20);
         frame.add(empty);
 
-        //JPanel for JTextField for the showing of turns
-        /*JPanel TextField = new JPanel();
-        TextField.setLayout(new FlowLayout());
-        TextField.setBounds(-245, 550, 1000, 40);
-        TextField.setBackground(new Color(105,162,176));
-        frame.add(TextField);*/
+        //JPanel for JLabel for the showing of turns
+        JPanel Blue = new JPanel();
+        Blue.setLayout(new FlowLayout());
+        Blue.setBounds(-245, 550, 1000, 40);
+        Blue.setBackground(new Color(105,162,176));
+        frame.add(Blue);
 
-        //showTurns();
-        /*JTextField1 = new JTextField();
-        JTextField1.setBounds(-245, 550, 228, 25);
-        TextField.add(JTextField1);
-
-        if(game.getTurn() == 1){
-            JTextField1.setText("Red's Turn");
-        }
-        else if (game.getTurn() == 2){
-            JTextField1.setText("Yellow's Turn");
-        }
-        else {
-            JTextField1.setText("Turn");
-        }*/
+        /*JLabel JTurnLabel = new JLabel();
+        JTurnLabel.setBounds(-245, 550, 228, 25);
+        TurnLabel.add(JTurnLabel);*/
 
         Buttons(); //Handles the creation of buttons
 
         Painting();//Handles the board creation and "painting"
+
+        playBackgroundMusic();
+
         frame.setBackground(new Color(52,52,74));
         frame.setVisible(true);
 
-        /* experimenting functions*/
-        //to show turns
-        //showTurns();
-        //addTurnName(gr);
-
     }
+
 
     //Calls the class Paint that draws the board
     public void Painting(){
@@ -108,6 +80,20 @@ public void paintingUpdate(){
         }
 }
 
+//to play some background music when running
+public void playBackgroundMusic(){
+
+        try{
+           File audioFile = new File("C:\\Users\\Angel Fitri Sari\\IdeaProjects\\Connect-Four\\Connect-Four/sound2.wav");
+           Clip audioClip = AudioSystem.getClip();
+           audioClip.open(AudioSystem.getAudioInputStream(audioFile));
+           audioClip.start();
+        }
+        catch(Exception e){
+           System.err.println(e.getMessage());
+        }
+    }
+
 //Handles the buttons
     private void Buttons() {
         JPanel pnButtons = new JPanel();
@@ -126,7 +112,6 @@ public void paintingUpdate(){
         colZero.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
         colZero.addActionListener(this::ColZeroActionPerformed);
         pnButtons.add(colZero);
-
 
         JButton colOne = new JButton(" \uD83E\uDC83 ");
         colOne.setFont(new Font("Arial ExtraBlack", Font.BOLD, 16));
@@ -167,7 +152,6 @@ public void paintingUpdate(){
 
     //BUTTONS ACTION
     //Each button has its own action that send the col number
-    /*Maybe try to make a single action if possible?*/
     private void newGameButtonActionPerformed(java.awt.event.ActionEvent event) {
         game.restart();
         paintingUpdate();
@@ -208,20 +192,7 @@ public void paintingUpdate(){
         game.runNT(6);
     }
 
-    //show current players turn
-    /* public void addTurnName(Graphics showTurn) {
-        Graphics2D gr = (Graphics2D) showTurn;
-        gr.setColor(new Color(255,255,255));
-        gr.setBackground(new Color(0,0,0));
-        if(game.turn == 1){
-            gr.drawString("Red's Turn", -245,550);
-        }
-        else if (game.turn == 2){
-            gr.drawString("Yellow's Turn", -245,550);
-        } //I will explore again to see if this might work
-    }*/
-
-    //attempt to show the winner popup message
+    //show the winner popup message
     public void showWinner(){
         JFrame frameShowWinner = new JFrame();
         if(game.isWinner()){
@@ -231,7 +202,7 @@ public void paintingUpdate(){
         }
     }
     
-    //attempt to show an announcement if it is a draw
+    //show an announcement if it is a draw
     public void showDraw(){
         JFrame frameShowDraw = new JFrame();
         JOptionPane.showMessageDialog(frameShowDraw, "It is a Draw! A new game will start!", "Draw!", JOptionPane.INFORMATION_MESSAGE);
@@ -239,7 +210,7 @@ public void paintingUpdate(){
         paintingUpdate();
     }
 
-    //attempt to show an announcement if a column is full
+    //show an announcement if a column is full
     public void showColumnFull(){
         JFrame frameShowColumnFull = new JFrame();
         JOptionPane.showMessageDialog(frameShowColumnFull, "Column full, try again!", "Column Full!", JOptionPane.INFORMATION_MESSAGE);
