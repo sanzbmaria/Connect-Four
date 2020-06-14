@@ -2,8 +2,6 @@ package connectFour;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
-import static java.lang.System.exit;
-
 //Same as Game but with threads (Im trying to implement it)
 public class Game implements Runnable{
 
@@ -262,16 +260,12 @@ public class Game implements Runnable{
 		}
 	}
 
-	// New getTurn function to get whose turn it is
-	int getTurn(){
-		return this.turn;
-	}
-
 	//This function checks if the column selected by the user is full or not
 	private  boolean isFull(int col) {
 		if (col >= 0)
 			return this.boardNumberDisk[col] == HEIGHT;
-		else return false;
+		else
+			return false;
 	}
 
 	//This function returns the next empty row to place the disk
